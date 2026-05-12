@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Main.java to edit this template
  */
 package finalexam;
+
 /**
  *
  * @author arabesko
@@ -14,6 +15,9 @@ public class FinalExam {
      */
     public static void main(String[] args) {
         Utilities myUtilities = new Utilities();
+        
+        myUtilities.dataBaseConnection();
+        
         int inputUser = 0;
         
         

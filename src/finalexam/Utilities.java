@@ -5,9 +5,6 @@
 package finalexam;
 
 import java.util.Scanner;
-import java.sql.*;
-
-
 
 /**
  *

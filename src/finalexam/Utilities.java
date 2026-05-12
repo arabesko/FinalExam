@@ -5,12 +5,30 @@
 package finalexam;
 
 import java.util.Scanner;
+import java.sql.*;
+
+
 
 /**
  *
  * @author arabesko
  */
 public class Utilities {
+    public void dataBaseConnection(){
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/cctdatabase", "root", "root");
+            
+            System.out.println("Connected to DB...XD");
+             
+        } catch (SQLException e){
+            System.out.println("SQL Error --> ");
+            System.out.println(e.getMessage());
+            System.out.println(e.getSQLState());
+        } catch (ClassNotFoundException e){
+            System.out.println("Class error --" + e.getMessage());
+        }
+    }
     
     public int myMenu(String prompt){
         Scanner myScan = new Scanner(System.in);

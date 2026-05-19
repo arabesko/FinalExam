@@ -14,12 +14,15 @@ import java.sql.*;
  * @author arabesko
  */
 public class Utilities {
-    public void dataBaseConnection(){
+    public Connection dataBaseConnection(){
+        //Method to conect whit the Data Base
         try{
             Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/cctdatabase", "root", "root");
+            //Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/cctdatabase", "root", "root");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/carSystem", "root", "root");
             
             System.out.println("Connected to DB...XD");
+            return con;
              
         } catch (SQLException e){
             System.out.println("SQL Error --> ");
@@ -28,9 +31,11 @@ public class Utilities {
         } catch (ClassNotFoundException e){
             System.out.println("Class error --" + e.getMessage());
         }
+        return null;
     }
     
     public int myMenu(String prompt){
+        //Method to do the menu with the options
         Scanner myScan = new Scanner(System.in);
         int userInput=0;
         boolean valid = false;
@@ -47,6 +52,32 @@ public class Utilities {
                     System.out.println("Please input a valid option. try again");
                 }
             } catch (Exception e){
+                //If the usea input text or decimal numbers
+                valid = false;
+                System.out.println("Please input a valid option, try again");
+                myScan.next();
+            }
+        } while (valid == false);
+        return userInput;
+    }
+    
+    public int numericInput(String prompt){
+        Scanner myScan = new Scanner(System.in);
+        int userInput=0;
+        boolean valid = false;
+        
+        do {
+            System.out.println(prompt);
+            try{
+                userInput = myScan.nextInt();
+                if(userInput > 0){
+                   valid = true;
+                } else {
+                    //If the user input negative number
+                    valid = false;
+                    System.out.println("The customer id must to be a positive number. try again");
+                }
+            } catch (Exception e){
                 //If the usea iinput text or decimal numbers
                 valid = false;
                 System.out.println("Please input a valid option, try again");
@@ -54,6 +85,17 @@ public class Utilities {
             }
         } while (valid == false);
         return userInput;
+    }
+    
+    public ResultSet dbResult(Connection db, String sqlPromp){
+        try{
+            Statement stmt = db.createStatement();
+            return stmt.executeQuery(sqlPromp);
+        } catch (SQLException e){
+            e.printStackTrace();
+            return null;
+        }
+        
     }
     
 }

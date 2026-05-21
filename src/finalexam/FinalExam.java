@@ -30,6 +30,7 @@ public class FinalExam {
         
         //Variables to get result of the Querys
         int id = 0; //Variable to get the id
+        int monthSelected = 0; //Variable for the month selected
         String name = ""; //Variable to save names
         int counter = 0; //Variable to count
         double price = 0; //Variable to save partial prices
@@ -93,7 +94,7 @@ public class FinalExam {
                         
                         System.out.println("\n\n" + "************ " + menu[1] + " ************\n");
                         numInput = myUtilities.numericInput("\nEnter the number of records to filter: ");
-                        asddesc = myUtilities.stringInput("\nEnter 1 for ascending order or 2 for descending order in the name: ");
+                        asddesc = myUtilities.ascDescInput("\nEnter 1 for ascending order or 2 for descending order in the name: ");
                         
                         
                         //Promp of the Query menu option 2
@@ -161,7 +162,7 @@ public class FinalExam {
                     case 4 -> {
                         System.out.println("\n\n" + "************ " + menu[3] + " ************\n");
                         numInput = myUtilities.numericInput("\nEnter the number of records to filter: ");
-                        asddesc = myUtilities.stringInput("\nEnter 1 for ascending order or 2 for descending order in the name: ");
+                        asddesc = myUtilities.ascDescInput("\nEnter 1 for ascending order or 2 for descending order in the name: ");
                         
                         //Promp of the Query menu option 4
                         promp = "SELECT boo.booking_id, cus.name, COUNT(boo.service_id) AS numServices, SUM(ser.serviceCharge) AS sumTotal"
@@ -191,7 +192,7 @@ public class FinalExam {
                     case 5 -> {
                         System.out.println("\n\n" + "************ " + menu[4] + " ************\n");
                         numInput = myUtilities.numericInput("\nEnter the number of records to filter: ");
-                        asddesc = myUtilities.stringInput("\nEnter 1 for ascending order or 2 for descending order in the total price: ");
+                        asddesc = myUtilities.ascDescInput("\nEnter 1 for ascending order or 2 for descending order in the total price: ");
                         
                         //Promp of the Query menu option 5
                         promp = "SELECT car.car_id,car.carType, COALESCE(SUM(ser.serviceCharge), 0) AS totalPerCar"
@@ -220,12 +221,22 @@ public class FinalExam {
                     }
                     case 6 -> {
                         System.out.println("\n\n" + "************ " + menu[5] + " ************\n");
+                        monthSelected = myUtilities.monthSelected("\n Input 1-12 to select an specific month or 0 for all the periods: ");
+                        String filterMonth;
+                        
+                        if (monthSelected == 0){
+                            filterMonth = ";";
+                        } else {
+                            filterMonth = " WHERE MONTH(boo.dateOfBooking) = " + monthSelected + ";";
+                        }
+                        
                         
                         //Promp of the Query manu option 6
                         promp = "SELECT boo.booking_id, SUM(ser.serviceCharge) AS totalIncomeCompany "
                                 + "FROM booking boo "
                                 + "JOIN detailBooking det ON boo.booking_id = det.booking_id "
-                                + "JOIN services ser ON ser.service_id = det.service_id; ";
+                                + "JOIN services ser ON ser.service_id = det.service_id"
+                                + filterMonth;
                         
                         rs = myUtilities.dbResult(DB, promp); //Query result
                         
@@ -240,6 +251,15 @@ public class FinalExam {
                     case 7 -> {
                         System.out.println("\n\n" + "************ " + menu[6] + " ************\n");
                         
+                        monthSelected = myUtilities.monthSelected("\n Input 1-12 to select an specific month or 0 for all the periods: ");
+                        String filterMonth;
+                        
+                        if (monthSelected == 0){
+                            filterMonth = " ";
+                        } else {
+                            filterMonth = " WHERE MONTH(boo.dateOfBooking) = " + monthSelected + " ";
+                        }
+                        
                         //Promp of the Query manu option 7
                         promp = "SELECT "
                                 + "MIN(totalPerBooking) As minimo, "
@@ -249,7 +269,8 @@ public class FinalExam {
                                 + "SELECT boo.booking_id, SUM(ser.serviceCharge) AS totalPerBooking "
                                 + "FROM booking boo "
                                 + "JOIN detailBooking det ON boo.booking_id = det.booking_id "
-                                + "JOIN services ser ON ser.service_id = det.service_id "
+                                + "JOIN services ser ON ser.service_id = det.service_id"
+                                + filterMonth
                                 + "GROUP BY boo.booking_id) AS totalBooking;";
                         
                         rs = myUtilities.dbResult(DB, promp); //Query result

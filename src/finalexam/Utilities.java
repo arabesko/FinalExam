@@ -88,6 +88,37 @@ public class Utilities {
         return userInput;
     }
     
+    public String stringInput(String prompt){
+        Scanner myScan = new Scanner(System.in);
+        int userInput=0;
+        String option="";
+        boolean valid = false;
+        
+        do {
+            System.out.print(prompt);
+            try{
+                userInput = myScan.nextInt();
+                if(userInput == 1){
+                   valid = true;
+                   option= "ASC";
+                } else if (userInput == 2) {
+                    //If the user input negative number
+                    valid = true;
+                    option = "DESC";
+                }else {
+                    System.out.println("Plese select an valid option. try again");
+                    valid = false;
+                }
+            } catch (Exception e){
+                //If the usea input text or decimal numbers
+                valid = false;
+                System.out.println("Please input a valid option, try again");
+                myScan.next();
+            }
+        } while (valid == false);
+        return option;
+    }
+    
     public ResultSet dbResult(Connection db, String sqlPromp){
         try{
             Statement stmt = db.createStatement();

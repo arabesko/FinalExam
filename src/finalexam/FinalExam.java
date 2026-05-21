@@ -24,8 +24,9 @@ public class FinalExam {
         ResultSet rs; //Result or the Query
         
         
-        int numInput = 0; //Variable por number input
+        int numInput = 0; //Variable for number input
         int inputUser = 0; //Variable of the menu selected
+        String asddesc =""; //Variable to filter ASC or DESC
         
         //Variables to get result of the Querys
         int id = 0; //Variable to get the id
@@ -91,19 +92,23 @@ public class FinalExam {
                     case 2 -> {
                         
                         System.out.println("\n\n" + "************ " + menu[1] + " ************\n");
-
+                        numInput = myUtilities.numericInput("\nEnter the number of records to filter: ");
+                        asddesc = myUtilities.stringInput("\nEnter 1 for ascending order or 2 for descending order in the name: ");
+                        
+                        
                         //Promp of the Query menu option 2
                         promp = "SELECT cust.cust_id, cust.name, COUNT(book.cust_id) AS countCustomer "
                                 + "FROM booking book "
                                 + "JOIN infoCustomers cust "
                                 + "ON book.cust_id = cust.cust_id "
                                 + "GROUP BY cust.cust_id "
-                                + "ORDER BY cust.name ASC;";
+                                + "ORDER BY cust.name " + asddesc + " "
+                                + "LIMIT " + numInput + ";";
                         
                         rs = myUtilities.dbResult(DB, promp); //Query result
                         
                         //Bucle to show de result of the Query
-                        System.out.printf("%-10s %-12s %-15s%n", "CUST ID", "NAME", "TOTAL BOOKING");
+                        System.out.printf("\n%-10s %-12s %-15s%n", "CUST ID", "NAME", "TOTAL BOOKING\n");
                         while (rs.next()) {
                             id = rs.getInt("cust_id");
                             name = rs.getString("name");
@@ -141,13 +146,13 @@ public class FinalExam {
                             
                             rs = myUtilities.dbResult(DB, promp); //Query result
 
-                            System.out.printf("%-5s %-15s %-15s%n", "ID", "SERVICE", "PRICE EU\n");
+                            System.out.printf("%-5s %-23s %-15s%n", "ID", "SERVICE", "PRICE EU\n");
                             //Bucle to show de result of the Query
                             while (rs.next()) {
                                 id = rs.getInt("service_id");
                                 name = rs.getString("serviceName");
                                 price = rs.getInt("serviceCharge");
-                                System.out.printf("%-5s %-15s %-15s%n", id, name, price);
+                                System.out.printf("%-5s %-23s %-15s%n", id, name, price);
                             }
                         } else {
                                 System.out.println("They are not records with this client id");
@@ -155,6 +160,8 @@ public class FinalExam {
                     }
                     case 4 -> {
                         System.out.println("\n\n" + "************ " + menu[3] + " ************\n");
+                        numInput = myUtilities.numericInput("\nEnter the number of records to filter: ");
+                        asddesc = myUtilities.stringInput("\nEnter 1 for ascending order or 2 for descending order in the name: ");
                         
                         //Promp of the Query menu option 4
                         promp = "SELECT boo.booking_id, cus.name, COUNT(boo.service_id) AS numServices, SUM(ser.serviceCharge) AS sumTotal"
@@ -163,12 +170,13 @@ public class FinalExam {
                                 + " JOIN booking book ON book.booking_id = boo.booking_id"
                                 + " JOIN infoCustomers cus ON cus.cust_id = book.cust_id"
                                 + " GROUP BY boo.booking_id"
-                                + " ORDER BY cus.name DESC;";
+                                + " ORDER BY cus.name " + asddesc
+                                + " LIMIT " + numInput + ";";
                         
                         rs = myUtilities.dbResult(DB, promp); //Query result
                         
                         //Bucle to show de result of the Query
-                        System.out.printf("%-10s %-20s %-15s %-15s%n", "Book ID", "CUSTOMER", "SERVICES", "TOTAL\n");
+                        System.out.printf("\n%-10s %-20s %-15s %-15s%n", "Book ID", "CUSTOMER", "SERVICES", "TOTAL\n");
                         while (rs.next()) {
                             id = rs.getInt("boo.booking_id");
                             name = rs.getString("cus.name");
@@ -182,6 +190,8 @@ public class FinalExam {
                     }
                     case 5 -> {
                         System.out.println("\n\n" + "************ " + menu[4] + " ************\n");
+                        numInput = myUtilities.numericInput("\nEnter the number of records to filter: ");
+                        asddesc = myUtilities.stringInput("\nEnter 1 for ascending order or 2 for descending order in the total price: ");
                         
                         //Promp of the Query menu option 5
                         promp = "SELECT car.car_id,car.carType, COALESCE(SUM(ser.serviceCharge), 0) AS totalPerCar"
@@ -193,7 +203,8 @@ public class FinalExam {
                                 + " LEFT JOIN services ser"
                                 + " ON det.service_id = ser.service_id"
                                 + " GROUP BY car.car_id, car.carType"
-                                + " ORDER BY totalPerCar DESC;";
+                                + " ORDER BY totalPerCar " + asddesc
+                                + " LIMIT " + numInput + ";";
                         
                         rs = myUtilities.dbResult(DB, promp); //Query result
                         

@@ -42,6 +42,7 @@ public class Utilities {
         
         do {
             System.out.println(prompt);
+            System.out.print("Input de option: ");
             try{
                 userInput = myScan.nextInt();
                 if(userInput >= 1 && userInput <=7){
@@ -67,7 +68,7 @@ public class Utilities {
         boolean valid = false;
         
         do {
-            System.out.println(prompt);
+            System.out.print(prompt);
             try{
                 userInput = myScan.nextInt();
                 if(userInput > 0){

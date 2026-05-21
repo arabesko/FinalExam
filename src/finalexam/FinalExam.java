@@ -27,23 +27,24 @@ public class FinalExam {
         int numInput = 0; //Variable por number input
         int inputUser = 0; //Variable of the menu selected
         
-        //Variables to get result of the Query
+        //Variables to get result of the Querys
         int id = 0; //Variable to get the id
-        String name = "";
-        int counter1 = 0;
-        double price1 = 0;
+        String name = ""; //Variable to save names
+        int counter = 0; //Variable to count
+        double price = 0; //Variable to save partial prices
+        double total = 0; //Varibale to save total operations
         
         //Matrix for the options of the menu
         String[] menu = {"Numer of bookings by Customer", 
                          "Numbers of booking of all the Customers",
                          "Detail of the booking",
                          "List of bookings and detail with total service price",
-                         "LISTADO DE CLIENTES SIN RESERVA",
-                         "Ingreso totales por vehiculo",
-                         "Ingreso total compañia",
+                         "Total Income by Vehicle",
+                         "Total Income of the Company",
+                         "Income Statistics for the Period",
                          "Exit"};
         
-        //Promp of the menu
+        //Promp of the menu to use a method
         String textMenu = "\n\n"
                       + "***** SELECT A VALID OPTION ******\n"
                       + "\nOption 1 - " + menu[0]
@@ -58,14 +59,13 @@ public class FinalExam {
         
         while (inputUser != 8){
             inputUser = myUtilities.myMenu(textMenu);
-            
             try{
                 switch(inputUser){
                     case 1 -> {
-                        System.out.println("\n\n" + "************ " + menu[0] + " ************");
+                        System.out.println("\n\n" + "************ " + menu[0] + " ************\n");
                         numInput = myUtilities.numericInput("\nInput the client id: ");
                         
-                        //Promp of the Query manu option 1
+                        //Promp of the Query menu option 1
                         promp = "SELECT cust.cust_id, cust.name, COUNT(book.cust_id) AS countCustomer "
                                 + "FROM booking book "
                                 + "JOIN infoCustomers cust "
@@ -74,26 +74,25 @@ public class FinalExam {
 
                         rs = myUtilities.dbResult(DB, promp); //Query result
                         
-                        //Read the only record
+                        //Get the result of the Query
                         if (rs.next()){
                             id = rs.getInt("cust_id");
                             name = rs.getString("name");
-                            counter1 = rs.getInt("countCustomer");
+                            counter = rs.getInt("countCustomer");
                             
-                            if (counter1 > 0){
-                                System.out.println("The client id: " + id + " - " + name + " have " + counter1 + " bookings");
+                            if (counter > 0){
+                                System.out.println("\nThe client id: " + id + " - " + name + " has " + counter + " bookings");
                             } else {
                                 System.out.println("They are not records with this client id");
                             }
                         }
-
                         System.out.println("\n\n" + "**************************************");
                     }
                     case 2 -> {
                         
-                        System.out.println("\n\n" + "************ " + menu[1] + " ************");
+                        System.out.println("\n\n" + "************ " + menu[1] + " ************\n");
 
-                        //Promp of the Query manu option 1
+                        //Promp of the Query menu option 2
                         promp = "SELECT cust.cust_id, cust.name, COUNT(book.cust_id) AS countCustomer "
                                 + "FROM booking book "
                                 + "JOIN infoCustomers cust "
@@ -108,15 +107,16 @@ public class FinalExam {
                         while (rs.next()) {
                             id = rs.getInt("cust_id");
                             name = rs.getString("name");
-                            int total = rs.getInt("countCustomer");
-
-                            System.out.printf("%-10d %-12s %-15d%n", id, name, total);
+                            counter = rs.getInt("countCustomer");
+                            System.out.printf("%-10d %-12s %-15d%n", id, name, counter);
                         }
                         System.out.println("\n\n" + "**************************************");
                     }
                     case 3 -> {
-                        System.out.println("\n\n" + "************ " + menu[2] + " ************");
+                        System.out.println("\n\n" + "************ " + menu[2] + " ************\n");
                         numInput = myUtilities.numericInput("\nInput the booking id: ");
+                        
+                        //Promp of the Query menu option 3
                         promp = "SELECT bo.booking_id, cus.name, car.carType "
                                 + "FROM booking bo "
                                 + "JOIN infoCustomers cus "
@@ -127,11 +127,12 @@ public class FinalExam {
                         
                         rs = myUtilities.dbResult(DB, promp); //Query result
                         
+                        //Get the result of the Query
                         if (rs.next()){
                             id = rs.getInt("bo.booking_id");
                             name = rs.getString("cus.name");
                             String car = rs.getString("car.carType");
-                            System.out.println("The booking id: " + id + " of the cliente: " + name + " with a car type: " + car + ", have the bellow detail: \n");
+                            System.out.println("\nThe booking ID: " + id + " of the cliente: " + name + ", with a " + car + "car type, has following details \n");
                             
                             promp = "SELECT bo.service_id, se.serviceName, se.serviceCharge "
                                     + "FROM detailBooking bo "
@@ -141,18 +142,21 @@ public class FinalExam {
                             rs = myUtilities.dbResult(DB, promp); //Query result
 
                             System.out.printf("%-5s %-15s %-15s%n", "ID", "SERVICE", "PRICE EU\n");
+                            //Bucle to show de result of the Query
                             while (rs.next()) {
                                 id = rs.getInt("service_id");
                                 name = rs.getString("serviceName");
-                                price1 = rs.getInt("serviceCharge");
-                                System.out.printf("%-5s %-15s %-15s%n", id, name, price1);
+                                price = rs.getInt("serviceCharge");
+                                System.out.printf("%-5s %-15s %-15s%n", id, name, price);
                             }
                         } else {
                                 System.out.println("They are not records with this client id");
                             }
                     }
                     case 4 -> {
-                        System.out.println("\n\n" + "************ " + menu[3] + " ************");
+                        System.out.println("\n\n" + "************ " + menu[3] + " ************\n");
+                        
+                        //Promp of the Query menu option 4
                         promp = "SELECT boo.booking_id, cus.name, COUNT(boo.service_id) AS numServices, SUM(ser.serviceCharge) AS sumTotal"
                                 + " FROM detailBooking boo"
                                 + " JOIN services ser ON ser.service_id = boo.service_id"
@@ -163,33 +167,96 @@ public class FinalExam {
                         
                         rs = myUtilities.dbResult(DB, promp); //Query result
                         
-                        counter1 = 0;
-                        id = 0;
-                        String customer = "";
-                        double total = 0;
-
+                        //Bucle to show de result of the Query
                         System.out.printf("%-10s %-20s %-15s %-15s%n", "Book ID", "CUSTOMER", "SERVICES", "TOTAL\n");
                         while (rs.next()) {
                             id = rs.getInt("boo.booking_id");
-                            customer = rs.getString("cus.name");
-                            counter1 = rs.getInt("numServices");
+                            name = rs.getString("cus.name");
+                            counter = rs.getInt("numServices");
                             total = rs.getInt("sumTotal");
 
-                            System.out.printf("%-10s %-20s %-15s %-15s%n", id, customer, counter1, total);
+                            System.out.printf("%-10s %-20s %-15s %-15s%n", id, name, counter, total);
                         }
                         
                      
                     }
                     case 5 -> {
-                        System.out.println("\n\n" + "************ " + menu[4] + " ************");
+                        System.out.println("\n\n" + "************ " + menu[4] + " ************\n");
+                        
+                        //Promp of the Query menu option 5
+                        promp = "SELECT car.car_id,car.carType, COALESCE(SUM(ser.serviceCharge), 0) AS totalPerCar"
+                                + " FROM infoCars car"
+                                + " LEFT JOIN booking boo"
+                                + " ON car.car_id = boo.car_id"
+                                + " LEFT JOIN detailBooking det"
+                                + " ON boo.booking_id = det.booking_id"
+                                + " LEFT JOIN services ser"
+                                + " ON det.service_id = ser.service_id"
+                                + " GROUP BY car.car_id, car.carType"
+                                + " ORDER BY totalPerCar DESC;";
+                        
+                        rs = myUtilities.dbResult(DB, promp); //Query result
+                        
+                        System.out.printf("%-10s %-20s %-15s%n", "CAR ID", "CAR", "TOTAL\n");
+                        //Bucle to show de result of the Query
+                        while (rs.next()) {
+                            id = rs.getInt("car.car_id");
+                            name = rs.getString("car.carType");
+                            total = rs.getInt("totalPerCar");
+
+                            System.out.printf("%-10s %-20s %-15s%n", id, name, total);
+                        }
                     }
                     case 6 -> {
-                        System.out.println("\n\n" + "************ " + menu[5] + " ************");
+                        System.out.println("\n\n" + "************ " + menu[5] + " ************\n");
+                        
+                        //Promp of the Query manu option 6
+                        promp = "SELECT boo.booking_id, SUM(ser.serviceCharge) AS totalIncomeCompany "
+                                + "FROM booking boo "
+                                + "JOIN detailBooking det ON boo.booking_id = det.booking_id "
+                                + "JOIN services ser ON ser.service_id = det.service_id; ";
+                        
+                        rs = myUtilities.dbResult(DB, promp); //Query result
+                        
+                        //Get the result of the Query
+                        if (rs.next()){
+                            total = rs.getDouble("totalIncomeCompany");
+                            System.out.println("\nThe total income for the comany is: " + total);
+                        } else {
+                            System.out.println("There is no income for the company in the records.");
+                        }
                     }
                     case 7 -> {
-                        System.out.println("\n\n" + "************ " + menu[6] + " ************");
+                        System.out.println("\n\n" + "************ " + menu[6] + " ************\n");
+                        
+                        //Promp of the Query manu option 7
+                        promp = "SELECT "
+                                + "MIN(totalPerBooking) As minimo, "
+                                + "MAX(totalPerBooking) AS maximo, "
+                                + "AVG(totalPerBooking) AS promedio "
+                                + "FROM ("
+                                + "SELECT boo.booking_id, SUM(ser.serviceCharge) AS totalPerBooking "
+                                + "FROM booking boo "
+                                + "JOIN detailBooking det ON boo.booking_id = det.booking_id "
+                                + "JOIN services ser ON ser.service_id = det.service_id "
+                                + "GROUP BY boo.booking_id) AS totalBooking;";
+                        
+                        rs = myUtilities.dbResult(DB, promp); //Query result
+                        
+                        //Get the result of the Query
+                        if (rs.next()){
+                            double minValue = rs.getDouble("minimo");
+                            double maxValue = rs.getDouble("maximo");
+                            double aveValue = rs.getDouble("promedio");
+                            
+                            System.out.println("\nThe company had the following statistics: \n");
+                            System.out.println("A  minimum income of:  " + minValue);
+                            System.out.println("A  maximum income of:  " + maxValue);
+                            System.out.println("An average income of:  " + aveValue);
+                        }
                     }
                     case 8 -> {
+                        //Finishing the software
                         System.out.println("\n\n" + "************ " + menu[6] + " ************");
                         System.out.println("See you soon, bye");
                         System.out.println("\n\n");
